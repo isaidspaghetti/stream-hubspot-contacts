@@ -1,27 +1,27 @@
 # Create a Chat Widget that Automatically Generates Contact info in Hubspot
 
-In this tutorial, learn how to build a [Stream](https://getstream.io) `frontend` / `backend` chat widget that connects to the Hubspot CRM to automatically create a new contact when a customer initiates a chat. This app and the rich [Stream chat API](https://getstream.io/chat/docs/?language=js) can be easily embedded to your site as a chat widget for sales, support, or a landing-page. You can take this knowledge to build powerful sales tools that seamlessly integrate with the Hubspot API.
+In this tutorial, learn how to build a [Stream](https://getstream.io) chat widget that connects to the Hubspot CRM to automatically create a new contact when a customer initiates a chat. This widget, backed by the [Stream chat API](https://getstream.io/chat/docs/?language=js), can be easily embedded to your site as a chat widget for sales, support, or a landing-page. You can take this knowledge to build powerful sales tools that seamlessly integrate with the Hubspot API.
 
 The frontend of this application includes a simple user registration form that takes in a name and email and starts a chat with a customer representative. The backend records the potential customer's name and email in a Hubspot Dashboard, and sets up a private chat app for the customer and a support representative.
 
 ## Overview
 
-The application utilizes a React `frontend` and an Express `backend`. The tutorial explains how to use some basic features of the powerful [Stream Library](https://getstream.io/), which handles 99% of creating a chat widget.
+The application utilizes a [React](https://reactjs.org/) `frontend` and an [Express](https://expressjs.com/) `backend`. The tutorial explains how to use some basic features of the powerful [Stream Library](https://getstream.io/), which handles most of creating a chat widget.
 
-The code required for this tutorial is available in [github] (LINK HERE). To build the app from scratch, use `npm express generator --no-view` for the backend, and `create-react-app` for the frontend. Just be sure to use the package.json file from this repository to get the required dependencies loaded in your version.
+The code required for this tutorial is available in [GitHub](https://github.com/isaidspaghetti/stream-hubspot-contacts). If you'd like to build the app from scratch, use `npm express generator --no-view` for the backend, and `create-react-app` for the frontend. Be sure to use the `package.json` file from this repository to get the required dependencies loaded in your version. Otherwise, you can clone the repo from GitHub and follow along.
 
 ## Prerequisites
 
-This tutorial is written to work with a wide range of skillsets. It requires basic knowledge of [React Hooks](https://reactjs.org/docs/hooks-intro.html), [Express Routing](https://expressjs.com/), and [Node.js](https://nodejs.org/en/ "node website"). The code is built with the [Node Package Manager](https://www.npmjs.com/get-npm), and is made to run locally. We also use [dotenv](https://www.npmjs.com/package/dotenv), and you will find that this tutorial is a good introduction to this package.
+This tutorial is written to work with a wide range of skillsets. It requires basic knowledge of [React Hooks](https://reactjs.org/docs/hooks-intro.html), [Expres](https://expressjs.com/), and [Node.js](https://nodejs.org/en/). The code is built and run with the [Node Package Manager](https://www.npmjs.com/get-npm), and is made to run locally. We also use [dotenv](https://www.npmjs.com/package/dotenv).
 
- You'll need to set up a free [Stream Account](https://getstream.io/get_started/?signup=#flat_feed) and a free [Hubspot Account](https://app.hubspot.com/signup/crm/step/user-info?hubs_signup-cta=getstarted-crm&hubs_signup-url=www.hubspot.com%2Fproducts%2Fget-started) if you don't have them already.
+ You'll need to set up a free [Stream Account](https://getstream.io/get_started/?signup=#flat_feed) and a free [Hubspot Account](https://app.hubspot.com/signup/crm/step/user-info?hubs_signup-cta=getstarted-crm&hubs_signup-url=www.hubspot.com%2Fproducts%2Fget-started).
 
 ### Not Covered
 
 * We'll create a Stream Client and register a user with a chat channel, but we won't specifically describe how to set up administrative accounts. We'll focus primarily on the potential customer's experience.
 * We won't explore notifying a customer representative when a chat is initiated.
 * Styling and CSS: this app uses the excellent out-of-the-box styling of Stream. Check out Stream's awesome [free UI Kit](https://getstream.io/chat/ui-kit/) to make your chat app shine ✨.
-* Encryption or Authentication. To add some more security to your app, check out [this post] (https://getstream.io/blog/hipaa-chat/), which shows how to authenticate users and encrypt messages.
+* Encryption or Authentication. To add some more security to your app, check out [this post](https://getstream.io/blog/hipaa-chat/), which shows how to authenticate users and encrypt messages.
 
 ## What We'll Do
 
@@ -30,9 +30,9 @@ This tutorial is written to work with a wide range of skillsets. It requires bas
 * Create a React user form with first name, last name, and email
 * Use an Express backend to:
     1. Send user form data to your Hubspot Dashboard
-    2. Initiate a one-on-one, private Stream Chat
-    3. Respond to the frontend with required credentials to join
-* Join and load the specified Chat in the frontend
+    2. Create a one-on-one, private Stream Chat [Channel](https://github.com/isaidspaghetti/stream-hubspot-contacts)
+    3. Respond to the frontend with required [credentials](https://github.com/isaidspaghetti/stream-hubspot-contacts) to join
+* Join and load the specified Chat in the frontend using Stream's built-in UI Components.
 
 ## Let's Get Down To Business
 
@@ -60,7 +60,7 @@ HUBSPOT_API_KEY=your hubspot api key goes here
 
 ![](images/hubspot-settings.png)
 
-4. Copy the Hubspot API key and paste it in the `.env`
+4. Copy the Hubspot API key and paste it in the `.env` located in the `backend` folder.
 
 <script src="https://gist.github.com/isaidspaghetti/78ab29744d5c3d93d735a1a81d1b83e0.js"></script>
 
@@ -82,7 +82,7 @@ Your Hubspot Account can now be accessed through this API key.
  
 ![](images/stream-create-new-app-button.png)
 
-4. Stream will generate a Key and Secret for your app. You need to copy these into your `.env` file as well.
+4. Stream will generate a Key and Secret for your app. You need to copy these into your `backend` `.env` file as well.
  
 ![](images/stream-key-secret-copy.png)
 
@@ -181,6 +181,8 @@ Let's take a look at the first half of the frontend's `register()` function. The
 
 Let's take a peek at how we handle the backend. When we use `npm start` from the terminal, `backend/package.json` runs `api.js`. `api.js` is set to allow Express to `.use` `backend/routes/index.js` on all requests. In other words: our request from the front end will get routed to `index.js`. (To learn more about how this works, take a peek at [this tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes)).
 
+// todo@taylor: the above paragraphi is confusing. I like the idea but let's discuss how to clarify.
+
 ### Configure index.js
 
 Before we dive into handling our routes, let's configure `index.js`:
@@ -199,16 +201,18 @@ const apiSecret = process.env.STREAM_API_SECRET;
 
 By requiring and configuring `('dotenv')`, we're able to access the private variables we set up in `.env`. Call these variables using `process.env`. The `('hubspot')` library will make connecting to their API a breeze.
 
+todo@taylor: link to these the appropriate libraries. You also are requiring `stream-chat` here which is confusing since we haven't talked it through yet.
+
 ### The primary backend function
 
-When a user registers to start a chat, `router.post(/registrations)` takes over. This router is our primary backend function, and will call a few handy methods to cleanly set up our chat session. Let's review the router function, then step through it to understand it.
+When a user registers to start a chat, `router.post('/registrations')` takes over. This handler is our primary backend function, and will call a few handy methods to set up our chat session. Let's review the router function, then step through it to understand it.
 
-#### Backend process flow
+#### Backend Registration Endpoint Process Flow
 
 * Call `createHubspotContact()` to create a Hubspot contact
 * Call `createUsers()` to create our `customer` and `supporter` chat members
 * Register our app as a Stream `client`
-* Register our users with our Stream client using `upsertUsers()`
+* Register (or update) our users with our Stream client using `upsertUsers()`
 * Create a private chat `channel` in our `client`
 * Create a `customerToken` for the frontend to join said channel
 * Respond to the frontend with all required data to start the client in a browser
@@ -297,6 +301,8 @@ async function createHubspotContact(firstName, lastName) {
 
 Back in the primary router, register the Stream app instance with `new StreamChat.Streamchat()`, passing in our `apiKey` and `apiSecret`.
 
+// todo@taylor: this feels awkard. Either cut or expand on what the client can do. This is just the client initialization code, it doesn't really "register" with stream.
+
 ## Client user registration
 
 To keep a chat secure, we can specify which users can use our client. Let's create a `customer` object for our frontend user, and a `supporter` object to represent a sales rep or support rep on the other end of the chat.
@@ -325,11 +331,13 @@ Back in our primary backend function, the `upsertUsers()` method registers both 
 
 ### Create a Stream channel
 
-Back to the `router.post` function. Now that we have our client registered with Stream, and our users registered with that client, we can open a channel for the two to chat. Stream's `channel()` method first accepts a channel type; `'messaging'` will be the best for this app.
+// todo@taylor: you don't really "register" the client with stream. You configure it with the proper credentials.
+
+Back to the `router.post` function. Now that we have our users registered with Stream, we can open a channel for the two to chat. Stream's `channel()` method first accepts a channel type; `'messaging'` will be the best for this app. // todo@taylor: add link to streams message types
 
 Each channel on your client should have a unique name. We use the customer's email address, so that if the user is disconnected from their chat, they can return to it by entering the same credentials into the registration form.
 
-The `members` argument specifies which users can join this channel. This is not required for the channel, but by specifying the members, we add a layer of privacy. 
+The `members` argument specifies which users can join this channel. This is not required for the channel, but by specifying the members, we add a layer of privacy. If we leave `members` off the channel is public by default.
 
 ### Token and response
 
@@ -442,7 +450,9 @@ function App() {
 }
 ```
 
-The responses from the backend are used in the same manner for the frontend. The `chatClient` and `channel` states determine what to render on the page. A lot of the "magic" here is, again, thanks to the powerful Stream Library, which provides each of the `<Components/>` we render once `chatClient` and `channel` evaluate to true. These libraries are easily imported in this file's import block: 
+//todo@taylor: this is repetitive with initial code snippet, let's carve it up to focus on what's new.
+
+The responses from the backend are used in the same manner for the frontend. The `chatClient` and `channel` states determine what to render on the page. A lot of the hard work here is done thanks to the Stream Library, which provides each of the components we render once `chatClient` and `channel` are configured. These libraries are easily imported in this file's import block: 
 
 ```jsx
 //frontend/App.js
@@ -452,6 +462,8 @@ import { StreamChat } from 'stream-chat';
 import './App.css';
 import 'stream-chat-react/dist/css/index.css'
 ```
+
+// todo@taylor: unnecessary
 
 ## That's a wrap
 
