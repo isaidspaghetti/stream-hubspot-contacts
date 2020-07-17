@@ -12,7 +12,7 @@ The code required for this tutorial is available in [GitHub](https://github.com/
 
 ## Prerequisites
 
-This tutorial is written to work with a wide range of skillsets. It requires basic knowledge of [React Hooks](https://reactjs.org/docs/hooks-intro.html), [Expres](https://expressjs.com/), and [Node.js](https://nodejs.org/en/). The code is built and run with the [Node Package Manager](https://www.npmjs.com/get-npm), and is made to run locally. We also use [dotenv](https://www.npmjs.com/package/dotenv).
+This tutorial is written to work with a wide range of skillsets. It requires basic knowledge of [React Hooks](https://reactjs.org/docs/hooks-intro.html), [Express](https://expressjs.com/), and [Node.js](https://nodejs.org/en/). The code is built and run with the [Node Package Manager](https://www.npmjs.com/get-npm) and is made to run locally. We also use [dotenv](https://www.npmjs.com/package/dotenv).
 
 You'll need to set up a free [Stream Account](https://getstream.io/get_started/?signup=#flat_feed) and a free [Hubspot Account](https://app.hubspot.com/signup/crm/step/user-info?hubs_signup-cta=getstarted-crm&hubs_signup-url=www.hubspot.com%2Fproducts%2Fget-started).
 
@@ -39,14 +39,15 @@ You'll need to set up a free [Stream Account](https://getstream.io/get_started/?
 
 First, we need to set up your unique API keys from Hubspot and Stream. These authenticate your app and are to be stored in a secure `.env` file. The Git Repo includes a `.env.example` file you can use as a template. Add your unique keys to this file, then remove '.example' from the file name.
 
+<!-- https://gist.github.com/isaidspaghetti/cf14fabb996a5d16cde7608ec34c3b15.js -->
 ```text
 //backend/.env.example
 NODE_ENV=development
 PORT=8080
 
-STREAM_API_KEY=your stream api key goes here
-STREAM_API_SECRET=your stream api secret goes here
-HUBSPOT_API_KEY=your hubspot api key goes here
+STREAM_API_KEY=your stream API key goes here
+STREAM_API_SECRET=your stream API secret goes here
+HUBSPOT_API_KEY=your Hubspot API key goes here
 ```
 
 ### Set-up your Hubspot
@@ -62,8 +63,6 @@ HUBSPOT_API_KEY=your hubspot api key goes here
 ![](images/hubspot-settings.png)
 
 4. Copy the Hubspot API key and paste it in the `.env` file located in the `backend` folder.
-
-<script src="https://gist.github.com/isaidspaghetti/78ab29744d5c3d93d735a1a81d1b83e0.js"></script>
 
 Your Hubspot Account can now be accessed through this API key.
 
@@ -105,7 +104,7 @@ When opening this app in the browser, the user will see this login form:
 
 The following snippet shows how the registration form is created. We'll ignore the chat app code for now, as indicated with `// ...`. 
 
-
+<!-- https://gist.github.com/isaidspaghetti/800dec9674e42bb829ebaac1494d0076.js -->
 ```jsx
 //frontend/src/App.js:7
 function App() {
@@ -155,6 +154,7 @@ The simple form above sets up three useStates to update and store the user input
 
 Let's take a look at the first half of the frontend's `register()` function. The second half of this function handles the response from the backend, which we will cover next. We use an asynchronous await function to give the backend time to do its work before we continue rendering in the frontend, and wrap the work in a try block for error handling. 
 
+<!-- https://gist.github.com/isaidspaghetti/330e5a38b7e6bf518b19e8a57e914b47.js -->
  ```jsx
  //frontend/src/App.js:15
  const register = async (e) => {
@@ -179,13 +179,15 @@ Let's take a look at the first half of the frontend's `register()` function. The
 ```
 
 ## Now for the Backend API
+### A brief explanation of backend routing
 
-Let's take a peek at how we handle the backend routing. Node knows that when a command is entered in the terminal, it should look for a `package.json` file to figure out what to do with that command. The command `npm start` is a script included in `backend/package.json`. This script tells node to run the `api.js` file. `api.js` is set to run on port 8080 (which can be changed in the `.env` file. Any communications from the frontend are directed to this port. `api.js` tells express to `.use` the file `backend/routes/index.js` on all requests. In other words: our request from the front end will get routed to `index.js`. (To learn more about how this works, take a peek at [this tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes)).
+Let's take a peek at how we handle the backend routing. `npm express generator` sets up this routing for us, but let's run through it in case it's new to you. Node knows that when a command is entered in the terminal, it should look for a `package.json` file to figure out what to do with that command. The command `npm start` is a script included in `backend/package.json`. This script tells node to run the file `backend/bin/www`, which in turn tells Express to start a server on port 8080 (the port number can be changed in the `.env` file).  Any communications from the frontend are directed to this port. `www` also tells express to run the `api.js` file to handle those requests. Next, `api.js` tells Express to `.use` the file `backend/routes/index.js` on all requests (`'/'`). In other words: our request from the front end will get routed to `index.js`. (To learn more about how this works, take a peek at [this tutorial](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes)).
 
 ### Configure index.js
 
 Before we dive into handling our routes, let's configure `index.js`:
 
+<!-- https://gist.github.com/isaidspaghetti/2e40841cf8dfdeb1f581912e88f374a8.js -->
 ```javascript
 //backend/routes/index.js:1
 const express = require('express');
@@ -198,7 +200,7 @@ const apiKey = process.env.STREAM_API_KEY;
 const apiSecret = process.env.STREAM_API_SECRET;
 ```
 The [StreamChat](https://github.com/GetStream/stream-chat-js) library is Stream's Chat App library that does all the heavy lifting of creating the chat app itself. Hubspot offers an excellent [library](https://www.npmjs.com/package/hubspot) we will utilize as well.
-By requiring and configuring `('dotenv')`, we're able to access the private variables we set up in `.env`. Call these variables using `process.env`. The `('hubspot')` library will make connecting to their API a breeze.
+By requiring and configuring `dotenv`, we're able to access the private variables we set up in `.env`. Call these variables using `process.env`. The `hubspot` library will make connecting to their API a breeze.
 
 ### The primary backend function
 
@@ -214,7 +216,7 @@ When a user registers to start a chat, `router.post('/registrations')` takes ove
 * Create a `customerToken` for the frontend to join said channel
 * Respond to the frontend with all required data to start the client in a browser
 
-
+<!-- https://gist.github.com/isaidspaghetti/1eebf1a62534d5970a2c6b5ffaeb2c82 -->
 ```javascript
 //backend/routes/index.js:46
 router.post('/registrations', async (req, res, next) => {
@@ -248,13 +250,30 @@ router.post('/registrations', async (req, res, next) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 ```
 
-### Hubspot API
+### Creating custom contact properties in Hubspot
 
-The router first creates the Hubspot contact with the `createHubspotContact()` method: 
+This application will update a customized contact property in the Hubspot CRM.
+To use a custom property follow these steps in your Hubspot Dashboard: 
 
+1. Navigate to your contacts:
+
+![](images/hubspot-navbar-contacts.png)
+
+2. Click the 'Actions' drop down menu, then 'Edit Properties':
+
+![](images/hubspot-contacts.png)
+
+3. Click the 'Create Property' button and add whatever type of custom fields you'd like to use.
+
+![](images/hubspot-properties.png)
+
+### Connecting to the Hubspot API
+
+The backend router first creates the Hubspot contact with the `createHubspotContact()` method: 
+
+<!-- https://gist.github.com/isaidspaghetti/d074eaad8678d4c86c928983948ba38e -->
 ```javascript
 //backend/routes/index.js:10
 async function createHubspotContact(firstName, lastName) {
@@ -277,28 +296,13 @@ async function createHubspotContact(firstName, lastName) {
   const hubspotContact = hubspot.contacts.create(contactObj)
   ```
 
- The `contactObj` is the argument to Hubspot's awesome `.create()` method. Any Hubspot contact property can be used in `contactObj`. Check out their full list of properties [here](https://legacydocs.hubspot.com/docs/methods/contacts/contact-properties-overview). Note how we used `your_custom_property` as a key. This is a custom key created in our Hubspot CRM, and is certainly optional. The code will throw an error if you don't have a matching property in your Hubspot CRM. The next section shows you how to set up your own custom contact properties in Hubspot.
-
- ### Bonus: Creating custom contact properties in Hubspot
-
- To use a custom property follow these steps in your Hubspot Dashboard: 
-
- 1. Navigate to your contacts:
-
-![](images/hubspot-navbar-contacts.png)
-
-2. Click the 'Actions' drop down menu, then 'Edit Properties':
-
-![](images/hubspot-contacts.png)
-
-3. Click the 'Create Property' button and add whatever type of custom fields you'd like to use.
-
-![](images/hubspot-properties.png)
+ The `contactObj` is the argument to Hubspot's awesome `.create()` method. Any Hubspot contact property can be used in `contactObj`. Check out their full list of properties [here](https://legacydocs.hubspot.com/docs/methods/contacts/contact-properties-overview). Note how we used `your_custom_property` as a key. The code will throw an error if you don't have a matching property in your Hubspot CRM. 
 
 ## Client user registration
 
 To keep a chat secure, we can specify which users can use our client. Let's create a `customer` object for our frontend user, and a `supporter` object to represent a sales rep or support rep on the other end of the chat.
 
+<!-- https://gist.github.com/isaidspaghetti/ec7f995b81421fb23e178c4afa52a056 -->
 ```javascript
 //backend/routes/index.js:30
 function createUsers(firstName, lastName) {
@@ -345,6 +349,7 @@ Once the backend is finished, the frontend needs to:
 
 The snippet below uses `//...` to indicate code we already covered in the first section.
 
+<!-- https://gist.github.com/isaidspaghetti/f88359e13d0a226a4f69191125cff2e5 -->
 ```jsx
 //frontend/App.js:7
 function App() {
@@ -416,8 +421,9 @@ The responses from the backend are used in the same manner for the frontend:
 
 The `chatClient` and `channel` states determine what to render on the page. After a successful response from the backend, these states will return truthy, and the Stream Chat components will be rendered. 
 
-To create a fully functional chat `<Component />` from scratch would be a monumentous task. Using the Stream's Components is a prudent use of time. Keep in mind that the Stream Chat Componenets used here are the most basic, but Stream offers seemingly endless customization. These libraries are easily imported in this file's import block: 
+To create a fully functional chat `<Component />` from scratch would be a monumental task. Using the Stream's Components is a prudent use of time. Keep in mind that the Stream Chat Components used here are the most basic, but Stream offers seemingly endless customization. These libraries are easily imported in this file's import block: 
 
+<!-- https://gist.github.com/isaidspaghetti/9703671b99be4cd53021ad2a1a63eb28 -->
 ```jsx
 //frontend/App.js
 import { Chat, Channel, ChannelHeader, MessageInput, MessageList, Thread, Window, } from 'stream-chat-react';
