@@ -8,7 +8,7 @@ const apiKey = process.env.STREAM_API_KEY;
 const apiSecret = process.env.STREAM_API_SECRET;
 
 //CREATE A CUSTOMER IN HUBSPOT
-async function createHubspotContact(firstName, lastName) {
+async function createHubspotContact(firstName, lastName, email) {
   const hubspot = new Hubspot({
     apiKey: process.env.HUBSPOT_API_KEY,
     checkLimit: false
@@ -18,6 +18,7 @@ async function createHubspotContact(firstName, lastName) {
     properties: [
       { property: 'firstname', value: firstName },
       { property: 'lastname', value: lastName },
+      { property: 'email', value: email },
       {
         property: 'your_custom_property',
         value: 'anything you want, even a multi-line \n string'
@@ -49,7 +50,7 @@ router.post('/registrations', async (req, res, next) => {
     const firstName = req.body.firstName.replace(/\s/g, '_');
     const lastName = req.body.lastName.replace(/\s/g, '_');
 
-    await createHubspotContact(firstName, lastName)
+    await createHubspotContact(firstName, lastName, req.body.email)
 
     const client = new StreamChat.StreamChat(apiKey, apiSecret);
 

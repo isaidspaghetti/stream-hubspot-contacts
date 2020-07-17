@@ -14,7 +14,6 @@ function App() {
 
   const register = async (e) => {
     try {
-
       e.preventDefault();
       var response = await fetch('http://localhost:8080/registrations', {
         method: 'POST',
@@ -28,9 +27,9 @@ function App() {
           email,
         }),
       });
+
       const { customerId, customerToken, channelId, apiKey } = await response.json();
       const chatClient = new StreamChat(apiKey);
-      console.log('front', customerId)
       await chatClient.setUser(
         {
           id: customerId,
